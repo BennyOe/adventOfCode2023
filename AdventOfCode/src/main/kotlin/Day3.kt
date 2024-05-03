@@ -40,22 +40,6 @@ object Day3 {
         println("Part one $sum")
     }
 
-    private fun partTwo(matrix: MutableList<MutableList<Char>>) {
-        // TODO test Input is working. Input not
-        var sum = 0
-
-        for (row in matrix.indices) {
-            for (column in matrix[row].indices) {
-                if (matrix[row][column] == '*') {
-                    val numbers: MutableSet<Int> = checkNumbersAtStar(row, column)
-                    if (numbers.size == 2)
-                    sum += numbers.reduce { acc, i -> acc * i }
-                }
-            }
-        }
-        println("Part Two: $sum")
-    }
-
     private fun checkNeighbours(row: Int, column: Int): Boolean {
         var hasNeighbours = false
         for (subrow in row - 1..row + 1) {
@@ -68,6 +52,22 @@ object Day3 {
             }
         }
         return hasNeighbours
+    }
+
+    private fun partTwo(matrix: MutableList<MutableList<Char>>) {
+        // TODO test Input is working. Input not
+        var sum = 0
+
+        for (row in matrix.indices) {
+            for (column in matrix[row].indices) {
+                if (matrix[row][column] == '*') {
+                    val numbers: MutableSet<Int> = checkNumbersAtStar(row, column)
+                    if (numbers.size == 2)
+                        sum += numbers.reduce { acc, i -> acc * i }
+                }
+            }
+        }
+        println("Part Two: $sum")
     }
 
     private fun checkNumbersAtStar(row: Int, column: Int): MutableSet<Int> {
