@@ -1,7 +1,26 @@
 import java.io.File
 
-data class Hand(val cards: String, val money: Int, val sortOrder: Int) {
+data class Hand(val cards: String, val money: Int, var sortOrder: Int) {
     constructor(cards: String, money: Int) : this(cards, money, calculateSortOrder(cards))
+
+    fun isBetterThan(other: String): Boolean {
+        var isBetter = false
+        for (i in cards.indices) {
+            if (getCardValue(cards[i]) > getCardValue(other[i])) isBetter = true
+        }
+        return isBetter
+    }
+
+    private fun getCardValue(card: Char): Int {
+        return when (card) {
+            'A' -> 20
+            'K' -> 19
+            'Q' -> 18
+            'J' -> 17
+            'T' -> 16
+            else -> card.digitToInt()
+        }
+    }
 
     companion object {
         fun calculateSortOrder(cards: String): Int {
@@ -17,17 +36,6 @@ data class Hand(val cards: String, val money: Int, val sortOrder: Int) {
                 isTwoPairs(card) -> 200
                 isOnePair(card) -> 100
                 else -> 0
-            }
-        }
-
-        private fun getCardValue(card: Char): Int {
-            return when (card) {
-                'A' -> 20
-                'K' -> 19
-                'Q' -> 18
-                'J' -> 17
-                'T' -> 16
-                else -> card.digitToInt()
             }
         }
 
@@ -75,15 +83,23 @@ object Day7 {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        val file = File("src/main/resources/day7/inputTest")
-        val decks = file.readLines().map { line -> line.split(" ") }.map { (k, v) -> Hand(k, v.toInt()) }
+        val file = File("src/main/resources/day7/input")
+        var decks = file.readLines().map { line -> line.split(" ") }.map { (k, v) -> Hand(k, v.toInt()) }
             .sortedBy { it.sortOrder }.toList()
 
         var sum = 0
+        for (i in 0 until  decks.size - 1) {
+            if (decks[i].sortOrder == decks[i + 1].sortOrder) {
+                if (decks[i].isBetterThan(decks[i + 1].cards)) decks[i].sortOrder += 1
+                else decks[i + 1].sortOrder += 1
+            }
+        }
+        decks = decks.sortedBy { it.sortOrder }
+
         for ((index, hand) in decks.withIndex()) {
-            println(hand)
             sum += (index + 1) * hand.money
         }
         println(sum)
     }
+
 }
